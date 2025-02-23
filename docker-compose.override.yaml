@@ -1,0 +1,10 @@
+services:
+  evolve_agent:
+    build:
+      context: ./evolve_agent
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./evolve_agent:/evolve_agent
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1  # Prevents Python from writing .pyc files
+      - PYTHONUNBUFFERED=1  # Prevents Python from buffering stdout and stderr

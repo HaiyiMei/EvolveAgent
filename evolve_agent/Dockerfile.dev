@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.dev.txt
 EXPOSE 8000
 
 # Command to run the application with hot reload
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--root-path", "/evolve_agent", "--reload", "--reload-dir", "/evolve_agent/app"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/evolve_agent/app"]
