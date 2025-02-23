@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -49,7 +50,6 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-cover/
 
 # Translations
 *.mo
@@ -72,7 +72,6 @@ instance/
 docs/_build/
 
 # PyBuilder
-.pybuilder/
 target/
 
 # Jupyter Notebook
@@ -83,9 +82,7 @@ profile_default/
 ipython_config.py
 
 # pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+.python-version
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
@@ -94,30 +91,7 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
-# UV
-#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#uv.lock
-
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
-
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/latest/usage/project/#working-with-version-control
-.pdm.toml
-.pdm-python
-.pdm-build/
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
 # Celery stuff
@@ -135,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.conda/
 
 # Spyder project settings
 .spyderproject
@@ -153,19 +128,76 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/'
 
-# pytype static type analyzer
-.pytype/
+.DS_Store
+web/.vscode/settings.json
 
-# Cython debug symbols
-cython_debug/
+# Intellij IDEA Files
+.idea/*
+!.idea/vcs.xml
+!.idea/icon.png
+.ideaDataSources/
+*.iml
+api/.idea
 
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+api/.env
+api/storage/*
 
-# PyPI configuration file
-.pypirc
+docker-legacy/volumes/app/storage/*
+docker-legacy/volumes/db/data/*
+docker-legacy/volumes/redis/data/*
+docker-legacy/volumes/weaviate/*
+docker-legacy/volumes/qdrant/*
+docker-legacy/volumes/etcd/*
+docker-legacy/volumes/minio/*
+docker-legacy/volumes/milvus/*
+docker-legacy/volumes/chroma/*
+docker-legacy/volumes/opensearch/data/*
+docker-legacy/volumes/pgvectors/data/*
+docker-legacy/volumes/pgvector/data/*
+
+docker/volumes/app/storage/*
+docker/volumes/certbot/*
+docker/volumes/db/data/*
+docker/volumes/redis/data/*
+docker/volumes/weaviate/*
+docker/volumes/qdrant/*
+docker/tidb/volumes/*
+docker/volumes/etcd/*
+docker/volumes/minio/*
+docker/volumes/milvus/*
+docker/volumes/chroma/*
+docker/volumes/opensearch/data/*
+docker/volumes/myscale/data/*
+docker/volumes/myscale/log/*
+docker/volumes/unstructured/*
+docker/volumes/pgvector/data/*
+docker/volumes/pgvecto_rs/data/*
+docker/volumes/couchbase/*
+docker/volumes/oceanbase/*
+docker/volumes/plugin_daemon/*
+!docker/volumes/oceanbase/init.d
+
+docker/nginx/conf.d/default.conf
+docker/nginx/ssl/*
+!docker/nginx/ssl/.gitkeep
+docker/middleware.env
+
+sdks/python-client/build
+sdks/python-client/dist
+sdks/python-client/dify_client.egg-info
+
+.vscode/*
+!.vscode/launch.json
+pyrightconfig.json
+api/.vscode
+
+.idea/
+.vscode
+
+# pnpm
+/.pnpm-store
+
+# plugin migrate
+plugins.jsonl
