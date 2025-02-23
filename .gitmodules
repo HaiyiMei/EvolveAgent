@@ -1,3 +1,0 @@
-[submodule "dependencies/dify"]
-	path = dependencies/dify
-	url = git@github.com:HaiyiMei/dify.git
