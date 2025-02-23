@@ -1,0 +1,120 @@
+{
+  "name": "LLM With Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        560,
+        240
+      ],
+      "id": "d11f7c02-9aec-42e6-8e24-953e40eb5f52",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "y5sz4mY9kjD57Fmz",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        300,
+        20
+      ],
+      "id": "63416c7e-8351-4ea3-af1f-3390fad59429",
+      "name": "Webhook",
+      "webhookId": "5b917f8c-bbe9-4274-ae8e-815d1294f78c"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.content }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        520,
+        20
+      ],
+      "id": "576c2c0d-d07f-4e7b-80e1-bb9566657136",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        20
+      ],
+      "id": "e4dc5c75-6c13-49ae-89f7-db658c9f0f32",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "versionId": "5f148558-fb8d-408a-96ce-2281a9563cc6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9238a9c1eb6447075b6954b3643dbedaf64da909dac9dc282b37ea588c54f6c"
+  },
+  "id": "P70LKuk4tsbAISsW",
+  "tags": []
+}

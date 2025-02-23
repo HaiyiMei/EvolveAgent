@@ -7,9 +7,9 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    DIFY_API_BASE: str = Field(default="http://api:5001")
-    DIFY_API_KEY: str = Field(default="your-api-key")
-    SUB_DOMAIN: str = Field(default="my-api")
+    # n8n settings
+    N8N_BASE_URL: str = Field(default="http://n8n:5678")
+    N8N_API_KEY: str = Field(default="your-n8n-api-key")
 
     class Config:
         env_file = ".env"

@@ -1,7 +1,7 @@
 FROM python:3.9-slim
 
-WORKDIR /evolve_agent
-ENV SUB_DOMAIN=evolve_agent
+# Create and set workspace directory
+WORKDIR /workspace/evolve_agent
 
 # Install development requirements
 COPY requirements.txt requirements.dev.txt ./
@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.dev.txt
 EXPOSE 8000
 
 # Command to run the application with hot reload
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/evolve_agent/app"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/workspace/evolve_agent/app"]

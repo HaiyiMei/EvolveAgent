@@ -1,5 +1,7 @@
+import json
 import sys
 from pathlib import Path
+from typing import Any, Dict
 
 from loguru import logger
 
@@ -51,3 +53,24 @@ def setup_logger(log_path: str = None):
         )
 
     return logger
+
+
+def load_workflow_template(template_name: str) -> Dict[str, Any]:
+    """Load a workflow template from the templates directory.
+
+    Args:
+        template_name: Name of the template file (without .json extension)
+
+    Returns:
+        Dict containing the workflow template
+
+    Raises:
+        FileNotFoundError: If template doesn't exist
+    """
+    template_path = Path(__file__).parent / "templates" / "workflows" / f"{template_name}.json"
+
+    if not template_path.exists():
+        raise FileNotFoundError(f"Workflow template '{template_name}' not found")
+
+    with open(template_path, "r") as f:
+        return json.load(f)
