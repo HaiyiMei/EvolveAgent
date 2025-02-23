@@ -35,6 +35,11 @@ server {
       include proxy.conf;
     }
 
+    location /evolve_agent/ {
+      proxy_pass http://evolve_agent:8000/;
+      include proxy.conf;
+    }
+
     location / {
       proxy_pass http://web:3000;
       include proxy.conf;

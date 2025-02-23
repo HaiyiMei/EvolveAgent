@@ -1,0 +1,14 @@
+FROM python:3.9-slim
+
+WORKDIR /evolve_agent
+ENV SUB_DOMAIN=evolve_agent
+
+# Install development requirements
+COPY requirements.txt requirements.dev.txt ./
+RUN pip install --no-cache-dir -r requirements.dev.txt
+
+# The rest of the application will be mounted as a volume
+EXPOSE 8000
+
+# Command to run the application with hot reload
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--root-path", "/evolve_agent", "--reload", "--reload-dir", "/evolve_agent/app"]

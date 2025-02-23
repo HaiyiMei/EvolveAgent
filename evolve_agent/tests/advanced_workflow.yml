@@ -1,0 +1,107 @@
+version: "0.1.5"
+kind: "app"
+app:
+  name: "Advanced Content Analysis Workflow"
+  mode: "workflow"
+  icon: "🔍"
+  description: "Advanced workflow that analyzes content using multiple models and tools"
+
+workflow:
+  graph:
+    nodes:
+      - id: "start"
+        type: "start"
+        data:
+          type: "start"
+          variables:
+            - name: "content"
+              type: "string"
+              required: true
+              description: "Content to be analyzed"
+              max_length: 8000
+            - name: "language"
+              type: "string"
+              required: true
+              description: "Target language for translation"
+              default: "English"
+
+      - id: "content_classifier"
+        type: "question-classifier"
+        data:
+          type: "question-classifier"
+          rules:
+            - name: "sentiment"
+              description: "Analyze sentiment"
+              prompt: "Is the content positive, negative, or neutral?"
+            - name: "topic"
+              description: "Identify main topic"
+              prompt: "What is the main topic of the content?"
+
+      - id: "parallel_analysis"
+        type: "parallel"
+        data:
+          type: "parallel"
+          parallel_branches:
+            - id: "sentiment_analysis"
+              nodes:
+                - id: "sentiment_llm"
+                  type: "llm"
+                  data:
+                    type: "llm"
+                    model:
+                      provider: "openai"
+                      name: "gpt-3.5-turbo"
+                    prompt_messages:
+                      - role: "system"
+                        content: "You are a sentiment analysis expert."
+                      - role: "user"
+                        content: "Analyze the sentiment of this text and explain why:\n{{content}}"
+
+            - id: "translation"
+              nodes:
+                - id: "translate_llm"
+                  type: "llm"
+                  data:
+                    type: "llm"
+                    model:
+                      provider: "openai"
+                      name: "gpt-3.5-turbo"
+                    prompt_messages:
+                      - role: "system"
+                        content: "You are a professional translator."
+                      - role: "user"
+                        content: "Translate the following text to {{language}}:\n{{content}}"
+
+      - id: "summarize"
+        type: "llm"
+        data:
+          type: "llm"
+          model:
+            provider: "openai"
+            name: "gpt-3.5-turbo"
+          prompt_messages:
+            - role: "system"
+              content: "You are a text summarization expert."
+            - role: "user"
+              content: "Create a summary of the analysis results:\nSentiment: {{sentiment_llm.output}}\nTranslation: {{translate_llm.output}}"
+
+      - id: "end"
+        type: "end"
+        data:
+          type: "end"
+          stream: false
+
+    edges:
+      - source: "start"
+        target: "content_classifier"
+      - source: "content_classifier"
+        target: "parallel_analysis"
+      - source: "parallel_analysis"
+        target: "summarize"
+      - source: "summarize"
+        target: "end"
+
+dependencies:
+  - type: "model_provider"
+    provider: "openai"
+    model: "gpt-3.5-turbo"

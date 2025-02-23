@@ -1,0 +1,4 @@
+-r requirements.txt
+debugpy>=1.6.7
+python-dotenv>=1.0.0
+watchfiles>=0.18.1

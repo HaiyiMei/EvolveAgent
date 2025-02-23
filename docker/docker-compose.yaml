@@ -433,6 +433,23 @@ services:
       - ssrf_proxy_network
       - default
 
+  # Our FastAPI Workflow Service
+  evolve_agent:
+    build:
+      context: ../evolve_agent
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      <<: *shared-api-worker-env
+      DIFY_API_BASE: ${PLUGIN_DIFY_INNER_API_URL:-http://api:5001}
+      DIFY_API_KEY: ${INNER_API_KEY_FOR_PLUGIN:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
+      SUB_DOMAIN: evolve_agent
+    depends_on:
+      - api
+    networks:
+      - ssrf_proxy_network
+      - default
+
   # worker service
   # The Celery worker for processing the queue.
   worker:
@@ -612,6 +629,7 @@ services:
       NGINX_ENABLE_CERTBOT_CHALLENGE: ${NGINX_ENABLE_CERTBOT_CHALLENGE:-false}
     depends_on:
       - api
+      - evolve_agent
       - web
     ports:
       - '${EXPOSE_NGINX_PORT:-80}:${NGINX_PORT:-80}'
