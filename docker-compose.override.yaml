@@ -7,7 +7,9 @@ services:
       - ./evolve_agent:/workspace/evolve_agent
       - ./pytest.ini:/workspace/pytest.ini
       - ./pyproject.toml:/workspace/pyproject.toml
+      - ./.env:/workspace/evolve_agent/.env
       - ./logs:/workspace/logs
     environment:
       - PYTHONDONTWRITEBYTECODE=1  # Prevents Python from writing .pyc files
       - PYTHONUNBUFFERED=1  # Prevents Python from buffering stdout and stderr
+    command: ["/bin/bash", "-c", "cd /workspace && pip install -e . && cd /workspace/evolve_agent && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /workspace/evolve_agent/app"]

@@ -10,8 +10,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from loguru import logger
 
-from .prompt import rag_prompt
+from .prompt import get_rag_prompt
 
 root = Path(__file__).parent
 project_root = root.parent
@@ -70,6 +71,7 @@ class TemplateRAG:
     def initialize(self):
         """Initialize the RAG system by loading documents and setting up the retrieval
         chain."""
+        logger.info("[RAG] System initializing...")
         # Load and split documents
         documents = self.loader.load()
         split_documents = self.text_splitter.split_documents(documents)
@@ -78,12 +80,13 @@ class TemplateRAG:
         self.vectorstore = Chroma.from_documents(documents=split_documents, embedding=self.embeddings)
 
         # Create prompt template
-        prompt = ChatPromptTemplate.from_template(rag_prompt)
+        prompt = ChatPromptTemplate.from_template(get_rag_prompt())
 
         # Create retrieval chain
         retriever = self.vectorstore.as_retriever(search_kwargs={"k": 3})
         document_chain = create_stuff_documents_chain(self.model, prompt)
         self.retrieval_chain = create_retrieval_chain(retriever, document_chain)
+        logger.info("[RAG] System initialized")
 
     def query(self, question: str) -> Dict:
         """Query the RAG system about workflow templates.
@@ -96,6 +99,7 @@ class TemplateRAG:
         """
         if not self.retrieval_chain:
             raise ValueError("RAG system not initialized. Call initialize() first.")
+        logger.info(f"[RAG] Querying RAG system with question: {question}")
         return self.retrieval_chain.invoke({"input": question})
 
     def get_relevant_templates(self, query: str, k: int = 3) -> List[Document]:

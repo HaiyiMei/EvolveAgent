@@ -36,9 +36,11 @@ def get_ollama_model(
     format: Literal["json", "text"] = "json",
     temperature: Optional[float] = None,
 ):
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    print(f"Using Ollama base URL: {ollama_base_url}")
     model = ChatOllama(
         model=model_id,
-        base_url="http://localhost:11434",
+        base_url=ollama_base_url,
         format=format,
         temperature=temperature,
     )
@@ -66,5 +68,4 @@ if __name__ == "__main__":
             HumanMessage(content="What is the capital of France?"),
         ]
     )
-    print(response.content)
     print(response.content)
