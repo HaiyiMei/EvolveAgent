@@ -33,7 +33,7 @@ The pipeline implements an iterative improvement process with automatic error ha
 
 ### Technology Stack
 
-- [N8N](https://n8n.io/) as the workflow engine
+- [N8N](https://n8n.io/) as the workflow engine. [~~(Dify)~~](https://dify.ai/)
 - [LangChain](https://www.langchain.com/) as the framework for the agents and RAG
 - [FastAPI](https://fastapi.tiangolo.com/) as the API server
 
