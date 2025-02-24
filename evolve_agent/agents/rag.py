@@ -14,7 +14,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from .prompt import rag_prompt
 
 root = Path(__file__).parent
-project_root = root.parent.parent
+project_root = root.parent
 templates_dir = project_root / "templates" / "dataset"
 
 

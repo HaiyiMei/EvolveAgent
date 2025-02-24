@@ -6,7 +6,7 @@ from langchain.schema import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-from ..constants import model_ids
+from .constants import model_ids
 
 load_dotenv()
 
