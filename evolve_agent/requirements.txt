@@ -1,0 +1,17 @@
+chromadb>=0.4.22
+fastapi>=0.115.8
+httpx>=0.23.0
+langchain>=0.3.18
+langchain-ollama>=0.2.3
+langchain-openai>=0.3.6
+langchain_chroma>=0.2.2
+langchain_community>=0.3.18
+loguru>=0.7.0
+openai>=1.12.0
+pydantic>=2.5.2,<3.0.0
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.6
+pyyaml>=6.0.1
+tiktoken>=0.5.2
+uvicorn>=0.24.0

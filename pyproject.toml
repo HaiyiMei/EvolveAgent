@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evolve_agent"
+version = "0.1.0"
+description = "EvolveAgent project"
+requires-python = ">=3.8"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["evolve_agent/requirements.txt"]}
+optional-dependencies = {dev = {file = ["evolve_agent/requirements.dev.txt"]}}
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
