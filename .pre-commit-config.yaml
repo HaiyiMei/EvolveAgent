@@ -30,6 +30,7 @@ repos:
     hooks:
       - id: codespell
         additional_dependencies: ["tomli"]
+        exclude: "^evolve_agent/templates"
 
   - repo: https://github.com/myint/docformatter.git
     rev: eb1df347edd128b30cd3368dddc3aa65edcfac38
