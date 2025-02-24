@@ -6,11 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routes import router
 from .utils import setup_logger
 
-root_path = Path(__file__).parent.parent
+project_root = Path(__file__).parent.parent
 
 API_PREFIX = "/api/v1"
 app = FastAPI(title="Evolve Agent", description="API for managing Evolve Agent")
-logger = setup_logger(root_path / "logs" / "app.log")
+logger = setup_logger(project_root / "logs" / "app.log")
 
 
 # CORS configuration

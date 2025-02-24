@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
-from ..services.n8n_service import N8nService
+from ..services.n8n_service import HTTPMethod, N8nService
 
 router = APIRouter()
 n8n_service = N8nService()
@@ -51,6 +51,22 @@ async def get_workflow_executions(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/webhooks/{webhook_path}")
+async def call_webhook(
+    webhook_path: str,
+    data: Dict[str, Any],
+    method: str = Query("POST", description="HTTP method to use for the webhook call"),
+) -> Dict[str, Any]:
+    """Call a webhook with the specified path and data."""
+    try:
+        webhook_method = HTTPMethod(method.upper())
+        return await n8n_service.call_webhook(webhook_path, webhook_method, data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid HTTP method: {method}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to call webhook: {str(e)}")
 
 
 @router.get("/workflows/{workflow_id}")

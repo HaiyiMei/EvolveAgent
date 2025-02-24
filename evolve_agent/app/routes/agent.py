@@ -13,5 +13,11 @@ n8n_service = N8nService()
 @router.post("/generate_workflow")
 async def generate_workflow(prompt: str) -> Dict[str, Any]:
     """Generate a new n8n workflow based on the prompt."""
-    workflow_json = agent.generate_workflow(prompt)
+    workflow_json = agent.rag_generate_workflow(prompt)
     return await n8n_service.create_workflow(workflow_json)
+
+
+@router.post("/pipeline")
+async def pipeline(prompt: str) -> Dict[str, Any]:
+    """Generate a new n8n workflow based on the prompt."""
+    return await agent.pipeline(prompt)

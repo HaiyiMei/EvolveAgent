@@ -11,12 +11,16 @@ async def test_create_and_execute_llm_with_webhook_workflow(n8n_service: N8nServ
     assert workflow["id"] is not None
 
     # Activate the workflow
-    active = await n8n_service.activate_workflow(workflow["id"])
-    assert active is True
+    result = await n8n_service.activate_workflow(workflow["id"])
+    assert result["success"] is True
 
     # Call the webhook
-    webhook_id = workflow["webhookIDs"][0]
-    response = await n8n_service.call_webhook(webhook_id, {"content": "Hello, world!"})
+    webhook = n8n_service.get_webhooks(workflow)[0]
+    response = await n8n_service.call_webhook(
+        webhook_path=webhook.path,
+        webhook_method=webhook.httpMethod,
+        data={"content": "Hello, world!"},
+    )
     assert response["text"] is not None
 
     # Cleanup

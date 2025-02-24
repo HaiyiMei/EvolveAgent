@@ -1,9 +1,28 @@
 import json
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict
 
 from loguru import logger
+
+
+@contextmanager
+def log_context(log_path: Path):
+    """Context manager for handling log file setup and cleanup.
+
+    Args:
+        log_path: Path to the log file
+
+    Example:
+        with log_context(Path("logs/my_log.txt")):
+            logger.info("This will be logged to the file")
+    """
+    handler_id = logger.add(log_path, rotation=None, retention=None)
+    try:
+        yield
+    finally:
+        logger.remove(handler_id)
 
 
 def setup_logger(log_path: str = None):

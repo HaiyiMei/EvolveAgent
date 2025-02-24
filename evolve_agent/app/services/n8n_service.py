@@ -1,8 +1,10 @@
 from typing import Any, Dict, List, Optional
 
 import httpx
+from loguru import logger
 
 from ..config import settings
+from ..schemas.workflow import HTTPMethod, WebhookNodeParameters
 
 
 class N8nService:
@@ -17,13 +19,13 @@ class N8nService:
         self.headers = {"X-N8N-API-KEY": self.api_key, "Content-Type": "application/json"}
 
     @staticmethod
-    def get_webhook_ids(json_data: Dict[str, Any]) -> List[str]:
-        """Get the webhook IDs for a workflow."""
-        webhook_ids = []
+    def get_webhooks(json_data: Dict[str, Any]) -> List[WebhookNodeParameters]:
+        """Get the webhooks for a workflow."""
+        webhooks = []
         for node in json_data["nodes"]:
             if node["type"] == "n8n-nodes-base.webhook":
-                webhook_ids.append(node["parameters"]["path"])
-        return webhook_ids
+                webhooks.append(WebhookNodeParameters(**node["parameters"]))
+        return webhooks
 
     @staticmethod
     def convert_json_to_workflow(json_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -48,10 +50,15 @@ class N8nService:
         }
         return workflow_data
 
-    async def call_webhook(self, webhook_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def call_webhook(self, webhook_path: str, webhook_method: HTTPMethod, data: Dict[str, Any]) -> Dict[str, Any]:
         """Call a webhook."""
         async with httpx.AsyncClient() as client:
-            response = await client.post(f"{self.webhook_url}/{webhook_id}", headers=self.headers, json=data)
+            response = await client.request(
+                method=webhook_method.value,
+                url=f"{self.webhook_url}/{webhook_path}",
+                headers=self.headers,
+                json=data,
+            )
             response.raise_for_status()
             return response.json()
 
@@ -104,9 +111,6 @@ class N8nService:
             response = await client.post(f"{self.api_url}/workflows", headers=self.headers, json=workflow_data)
             response.raise_for_status()
             workflow = response.json()
-
-            if is_webhook:
-                workflow["webhookIDs"] = self.get_webhook_ids(json_data)
             return workflow
 
     async def get_execution_results(self, execution_id: str, include_data: bool = True) -> Dict[str, Any]:
@@ -208,12 +212,25 @@ class N8nService:
 
         return deleted_ids
 
-    async def activate_workflow(self, workflow_id: str) -> bool:
-        """Activate a workflow."""
+    async def activate_workflow(self, workflow_id: str) -> Dict[str, Any]:
+        """Activate a workflow.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing success status and message.
+            If successful, returns {"success": True, "status": "active"}.
+            If failed, returns {"success": False, "error": error_message}.
+        """
         async with httpx.AsyncClient() as client:
-            response = await client.post(f"{self.api_url}/workflows/{workflow_id}/activate", headers=self.headers)
-            response.raise_for_status()
-            return response.json()["active"]
+            try:
+                response = await client.post(f"{self.api_url}/workflows/{workflow_id}/activate", headers=self.headers)
+                response.raise_for_status()
+                return {"success": True, "status": "active"}
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 400:
+                    error_msg = e.response.json().get("message", "Failed to activate workflow")
+                    logger.error(f"Failed to activate workflow {workflow_id}: {error_msg}")
+                    return {"success": False, "error": error_msg}
+                raise  # Re-raise other HTTP errors
 
     async def deactivate_workflow(self, workflow_id: str) -> bool:
         """Deactivate a workflow."""

@@ -7,7 +7,7 @@ from langchain.chains.retrieval import create_retrieval_chain
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from loguru import logger
@@ -71,36 +71,54 @@ class TemplateRAG:
     def initialize(self):
         """Initialize the RAG system by loading documents and setting up the retrieval
         chain."""
-        logger.info("[RAG] System initializing...")
-        # Load and split documents
-        documents = self.loader.load()
-        split_documents = self.text_splitter.split_documents(documents)
+        if (self.templates_dir / "chroma.sqlite3").exists():
+            logger.info("[RAG] Loading existing vector store...")
+            self.vectorstore = Chroma(
+                persist_directory=str(self.templates_dir),
+                embedding_function=self.embeddings,
+                collection_name="workflow_templates",
+            )
+        else:
+            logger.info("[RAG] Creating new vector store...")
+            documents = self.loader.load()
+            split_documents = self.text_splitter.split_documents(documents)
 
-        # Create vector store
-        self.vectorstore = Chroma.from_documents(documents=split_documents, embedding=self.embeddings)
+            self.vectorstore = Chroma.from_documents(
+                documents=split_documents,
+                embedding=self.embeddings,
+                persist_directory=str(self.templates_dir),
+            )
 
-        # Create prompt template
-        prompt = ChatPromptTemplate.from_template(get_rag_prompt())
+        rag_prompt = get_rag_prompt()
 
-        # Create retrieval chain
         retriever = self.vectorstore.as_retriever(search_kwargs={"k": 3})
-        document_chain = create_stuff_documents_chain(self.model, prompt)
+        document_chain = create_stuff_documents_chain(self.model, rag_prompt)
         self.retrieval_chain = create_retrieval_chain(retriever, document_chain)
         logger.info("[RAG] System initialized")
 
-    def query(self, question: str) -> Dict:
+    def query(
+        self,
+        question: str,
+        archive: str = None,
+        errors: str = None,
+        guidelines: str = None,
+    ) -> Dict:
         """Query the RAG system about workflow templates.
 
         Args:
             question: The question or query about workflow templates
+            archive: The archive of the discovered architectures
+            errors: The errors that happened in the last archive workflow
+            guidelines: The guidelines for the RAG system
 
         Returns:
             Dict containing the answer and other relevant information
         """
         if not self.retrieval_chain:
             raise ValueError("RAG system not initialized. Call initialize() first.")
-        logger.info(f"[RAG] Querying RAG system with question: {question}")
-        return self.retrieval_chain.invoke({"input": question})
+        return self.retrieval_chain.invoke(
+            {"input": question, "archive": archive, "errors": errors, "guidelines": guidelines}
+        )
 
     def get_relevant_templates(self, query: str, k: int = 3) -> List[Document]:
         """Get the most relevant templates for a query without generating an answer.
@@ -112,14 +130,17 @@ class TemplateRAG:
         Returns:
             List of relevant template documents
         """
-        if not self.vectorstore:
+        if self.vectorstore is None:
             raise ValueError("Vector store not initialized. Call initialize() first.")
         return self.vectorstore.similarity_search(query, k=k)
 
 
 if __name__ == "__main__":
+    from .core import get_model
+
     print("Testing with Ollama model...")
-    rag = TemplateRAG(templates_dir=templates_dir, model_id="ollama/llama3.2")
+    rag_model, rag_embeddings = get_model(model_id="ollama/llama3.2", format="json", temperature=0.2)
+    rag = TemplateRAG(templates_dir=templates_dir, model=rag_model, embeddings=rag_embeddings)
 
     # 1. Test basic template querying
     print("\n=== Testing Simple Query ===")

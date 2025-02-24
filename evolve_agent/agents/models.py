@@ -12,7 +12,7 @@ load_dotenv()
 
 
 def get_openai_model(
-    model_id: str = "gpt-4o",
+    model_id: str = "gpt-4o-mini",
     format: Literal["json", "text"] = "json",
     temperature: Optional[float] = None,
 ):
@@ -36,11 +36,9 @@ def get_ollama_model(
     format: Literal["json", "text"] = "json",
     temperature: Optional[float] = None,
 ):
-    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    print(f"Using Ollama base URL: {ollama_base_url}")
     model = ChatOllama(
         model=model_id,
-        base_url=ollama_base_url,
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         format=format,
         temperature=temperature,
     )
@@ -57,15 +55,18 @@ def get_model(
         return get_ollama_model(model_id.split("/")[1], format, temperature)
     elif "openai" in model_id:
         return get_openai_model(model_id.split("/")[1], format, temperature)
+    else:
+        raise ValueError(f"Invalid model ID: {model_id}")
 
 
 if __name__ == "__main__":
-    model, embeddings = get_ollama_model()
+    model, embeddings = get_openai_model()
+    # model, embeddings = get_ollama_model()
     embeddings.embed_query("What is the capital of France?")
     response = model.invoke(
         [
             SystemMessage(content="You are a helpful assistant."),
-            HumanMessage(content="What is the capital of France?"),
+            HumanMessage(content="What is the capital of France? return in json format like {'answer': '...'}"),
         ]
     )
     print(response.content)
