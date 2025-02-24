@@ -8,9 +8,9 @@
 
 ## Overview
 
-The EvolveAgent system implements an pipeline for automated workflow generation, execution, and iterative improvement.
+The EvolveAgent system implements a pipeline for automated workflow generation, execution, and iterative improvement.
 
-The main pipeline is defined in [evolve_agent/agents/core.py](evolve_agent/agents/core.py#192) and orchestrates the interaction between multiple agent components:
+The main pipeline is defined in [evolve_agent/agents/core.py@pipeline](evolve_agent/agents/core.py#L192) and orchestrates the interaction between multiple agent components:
 
 ### Pipeline Process
 
