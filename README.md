@@ -71,9 +71,13 @@ https://www.firecrawl.dev/app
 
 ## TODO:
 
-- [ ] Collect more templates and do a better RAG agent.
+- Collect more templates and do a better RAG agent.
 
-- [ ] Add synthetic data as input/output of the generated workflow, to test the correctness and efficiency of the evolved workflow.
+- Add synthetic data as input/output of the generated workflow, to test the correctness and efficiency of the evolved workflow.
+
+- Implement a rendering engine capable of generating workflow JSON based on provided arguments, replacing the RAG LLM.
+
+  - A Code Agent can utilize the rendering engine as a tool, serving as an alternative to RAG.
 
 ## BUGs:
 
