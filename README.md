@@ -61,4 +61,6 @@ https://www.firecrawl.dev/app
 
 ## BUGs:
 
-if running in a container, the ollama embeddings cannot be accessed.
+- If running in a container, the ollama embeddings cannot be accessed.
+- In docker-compose production, the webhook cannot be accessed from evolve_agent yet.
+- N8N_PUBLIC_URL is not working.
