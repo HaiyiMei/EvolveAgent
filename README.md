@@ -2,23 +2,27 @@
 
 <h2>
     <p align="center">
-    🤖 EvolveAgent
+    🤖 EvolveAgent: Self-evolving workflow automation
     </p>
 </h2>
 
 ## Overview
 
-
 https://github.com/user-attachments/assets/d3ac5ea7-164e-4d3a-9034-4005ae2cd9d8
-
 
 The EvolveAgent system implements a pipeline for automated workflow generation, execution, and iterative improvement.
 
-The main pipeline is defined in [evolve_agent/agents/core.py@pipeline](evolve_agent/agents/core.py#L192) and orchestrates the interaction between multiple agent components:
+Below are the key components and configurations:
+
+- [pipeline](evolve_agent/agents/core.py#L193): The main pipeline that orchestrates the entire workflow generation, execution, and iterative improvement.
+- [prompt](evolve_agent/agents/prompt.py): The prompt for the meta-agent and rag-agent.
 
 ### Playground
 
-- N8N as the workflow engine.
+- **N8N**: The workflow automation engine that provides:
+  - Workflow file structure and templates
+  - Execution environment
+  - Webhook triggers for workflow execution
 
 ### Pipeline Process
 
@@ -33,17 +37,19 @@ The main pipeline is defined in [evolve_agent/agents/core.py@pipeline](evolve_ag
     - Incorporates feedback from previous attempts
     - Adapts to error cases and refines solutions
 
-The pipeline implements an iterative improvement process with automatic error handling and retries:
-- Maintains detailed logging of each attempt
-- Archives previous workflow versions
-- Handles workflow execution errors gracefully
-- Supports multiple retry attempts with refined prompts
+### Iterative Improvement Process
+
+The pipeline implements automatic error handling and continuous improvement through:
+- Detailed logging of each attempt
+- Version control of workflow iterations
+- Graceful error handling
+- Multiple retry attempts with refined prompts
 
 ### Technology Stack
 
-- [N8N](https://n8n.io/) as the workflow engine. [~~(Dify)~~](https://dify.ai/)
-- [LangChain](https://www.langchain.com/) as the framework for the agents and RAG
-- [FastAPI](https://fastapi.tiangolo.com/) as the API server
+- [N8N](https://n8n.io/) - Workflow automation engine
+- [LangChain](https://www.langchain.com/) - Framework for agents and RAG
+- [FastAPI](https://fastapi.tiangolo.com/) - API server
 
 ## Setup
 
@@ -63,6 +69,12 @@ https://n8n.io/workflows/
 
 https://www.firecrawl.dev/app
 
+## TODO:
+
+- [ ] Collect more templates and do a better RAG agent.
+
+- [ ] Add synthetic data as input/output of the generated workflow, to test the correctness and efficiency of the evolved workflow.
+
 ## BUGs:
 
 - In docker-compose production
@@ -70,3 +82,9 @@ https://www.firecrawl.dev/app
   - the webhook cannot be accessed from backend(evolve_agent) yet.
   - the ollama embeddings cannot be accessed.
 - N8N_PUBLIC_URL is not working.
+
+## References
+
+- [ADAS](https://github.com/ShengranHu/ADAS)
+- [AdaFlow](https://github.com/SylphAI-Inc/AdalFlow)
+- [Symbolic Learning](https://github.com/aiwaves-cn/agents)
