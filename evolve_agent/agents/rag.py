@@ -164,4 +164,3 @@ if __name__ == "__main__":
         # Print first 200 characters of content as preview
         preview = doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
         print(f"Preview: {preview}")
-        print(f"Preview: {preview}")

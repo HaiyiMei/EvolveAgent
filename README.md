@@ -12,6 +12,10 @@ The EvolveAgent system implements a pipeline for automated workflow generation, 
 
 The main pipeline is defined in [evolve_agent/agents/core.py@pipeline](evolve_agent/agents/core.py#L192) and orchestrates the interaction between multiple agent components:
 
+### Playground
+
+- N8N as the workflow engine.
+
 ### Pipeline Process
 
 1. **Meta-Agent**

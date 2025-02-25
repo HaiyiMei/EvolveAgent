@@ -228,7 +228,7 @@ class N8nService:
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 400:
                     error_msg = e.response.json().get("message", "Failed to activate workflow")
-                    logger.error(f"Failed to activate workflow {workflow_id}: {error_msg}")
+                    logger.error(f"[N8N] Failed to activate workflow {workflow_id}: {error_msg}")
                     return {"success": False, "error": error_msg}
                 raise  # Re-raise other HTTP errors
 
