@@ -33,7 +33,7 @@ const { publicRuntimeConfig } = getConfig() || { publicRuntimeConfig: {} }
 // Use runtime config with fallbacks, checking both runtime config and env variables
 const API_URL = publicRuntimeConfig?.API_URL || process.env.API_URL || 'http://localhost:8888/api/v1'
 const WS_URL = publicRuntimeConfig?.WS_URL || process.env.WS_URL || 'ws://localhost:8888/api/v1'
-const N8N_API_URL = publicRuntimeConfig?.N8N_API_URL || process.env.N8N_API_URL || 'http://localhost:5678'
+const N8N_PUBLIC_URL = publicRuntimeConfig?.N8N_PUBLIC_URL || process.env.N8N_PUBLIC_URL || 'http://localhost:5678'
 
 const GITHUB_REPO = "https://github.com/HaiyiMei/EvolveAgent"
 
@@ -84,7 +84,7 @@ export default function Home() {
       const match = log.match(workflowRegex)
       if (match) {
         const workflowId = match[1]
-        const url = `${N8N_API_URL}/workflow/${workflowId}`
+        const url = `${N8N_PUBLIC_URL}/workflow/${workflowId}`
         setWorkflowUrls(prev => {
           // Check if this URL already exists
           if (!prev.some(item => item.url === url)) {

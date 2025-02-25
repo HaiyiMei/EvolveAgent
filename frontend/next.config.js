@@ -8,7 +8,7 @@ const nextConfig = {
   env: {
     API_URL: process.env.API_URL,
     WS_URL: process.env.WS_URL,
-    N8N_API_URL: process.env.N8N_API_URL,
+    N8N_PUBLIC_URL: process.env.N8N_PUBLIC_URL,
   },
   // Enable runtime configuration
   serverRuntimeConfig: {
@@ -18,7 +18,7 @@ const nextConfig = {
     // Will be available on both server and client
     API_URL: process.env.API_URL,
     WS_URL: process.env.WS_URL,
-    N8N_API_URL: process.env.N8N_API_URL,
+    N8N_PUBLIC_URL: process.env.N8N_PUBLIC_URL,
   },
 }
 

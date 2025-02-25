@@ -28,7 +28,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV API_URL=http://evolve_agent:8000/api/v1
 ENV WS_URL=ws://evolve_agent:8000/api/v1
-ENV N8N_API_URL=http://n8n:5678
+ENV N8N_PUBLIC_URL=http://n8n:5678
 
 # Copy necessary files from builder
 COPY --from=builder /app/public ./public
