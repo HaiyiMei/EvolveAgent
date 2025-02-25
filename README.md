@@ -8,9 +8,17 @@
 
 ## Overview
 
+
+https://github.com/user-attachments/assets/d3ac5ea7-164e-4d3a-9034-4005ae2cd9d8
+
+
 The EvolveAgent system implements a pipeline for automated workflow generation, execution, and iterative improvement.
 
 The main pipeline is defined in [evolve_agent/agents/core.py@pipeline](evolve_agent/agents/core.py#L192) and orchestrates the interaction between multiple agent components:
+
+### Playground
+
+- N8N as the workflow engine.
 
 ### Pipeline Process
 
@@ -57,4 +65,8 @@ https://www.firecrawl.dev/app
 
 ## BUGs:
 
-if running in a container, the ollama embeddings cannot be accessed.
+- In docker-compose production
+  - n8n service has issue with create a new workflow and save it.
+  - the webhook cannot be accessed from backend(evolve_agent) yet.
+  - the ollama embeddings cannot be accessed.
+- N8N_PUBLIC_URL is not working.

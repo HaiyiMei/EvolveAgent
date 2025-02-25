@@ -56,14 +56,13 @@ def get_error_msg(stage: str, message: str) -> str:
 
 
 class Agent:
-    def __init__(self, max_retries: int = 5):
+    def __init__(self):
         self.agent_meta, _ = get_model(model_id="openai/gpt-4o", format="json", temperature=0.8)
         rag_model, rag_embeddings = get_model(model_id="openai/gpt-4o-mini", format="json", temperature=0.2)
         self.agent_rag = TemplateRAG(model=rag_model, embeddings=rag_embeddings)
         self.agent_input, _ = get_model(model_id="openai/gpt-4o-mini", format="json", temperature=0.2)
 
         self.n8n_service = N8nService()
-        self.max_retries = max_retries
 
     def rag_generate_workflow(
         self,
@@ -117,15 +116,17 @@ class Agent:
 
         # 1. generate_workflow
         workflow = self.rag_generate_workflow(prompt, archive, errors, guidelines)
-        workflow["name"] = f"{step_name}-{workflow['name']}"
+        workflow["name"] = f"{step_name}---{workflow['name']}"
         save_path = save_dir / f"{workflow['name']}.json"
         save_path.write_text(json.dumps(workflow, indent=2))
-        logger.info(f"[Agent] Saved workflow to {save_path}")
+        logger.debug(f"[Agent] Saved workflow to {save_path}")
 
         # 2. create_workflow
         try:
             created_workflow = await self.n8n_service.create_workflow(workflow, is_webhook=True)
-            logger.info(f"[Agent] Created workflow: {created_workflow['name']}")
+            logger.info(
+                f'[Agent] Created workflow, "name": "{created_workflow["name"]}", "id": "{created_workflow["id"]}"'
+            )
         except Exception as e:
             logger.error(f"[Agent] Error creating workflow: {e}")
             raise WorkflowExecutionError(
@@ -189,7 +190,7 @@ class Agent:
             )
         return response
 
-    async def pipeline(self, prompt: str) -> Dict[str, Any]:
+    async def pipeline(self, prompt: str, max_iteration: int = 5) -> Dict[str, Any]:
         """This is the main pipeline method that orchestrates the entire workflow
         generation and execution process.
 
@@ -208,9 +209,9 @@ class Agent:
             ]
             error_msg = None
             archives = []
-            for idx in range(self.max_retries):
+            for idx_iter in range(max_iteration):
                 try:
-                    logger.info(f"[Agent] Iteration {idx + 1} of {self.max_retries}")
+                    logger.info(f"[Agent] Iteration {idx_iter + 1} of {max_iteration}")
                     logger.info("[Agent] Meta agent invoking...")
                     logger.debug(f"[Agent] Meta agent prompt:\n{msg_list}")
                     response_meta = self.agent_meta.invoke(msg_list).content
@@ -219,7 +220,7 @@ class Agent:
                     logger.info("[Agent] RAG agent invoking...")
                     response_rag = await self.step(
                         save_dir=save_dir,
-                        step_name=f"{timestamp}-{idx + 1:02d}",
+                        step_name=f"{timestamp}---{idx_iter + 1:02d}",
                         prompt=prompt,
                         archive="\n".join(archives),
                         errors=error_msg,
@@ -227,8 +228,8 @@ class Agent:
                     )
                     return response_rag
                 except WorkflowExecutionError as e:
-                    logger.error(f"[Agent] Error in step: {e}")
-                    logger.error("[Agent] Retrying with new prompt...")
+                    # logger.error(f"[Agent] Error in step: {e}")
+                    # logger.error("[Agent] Retrying with new prompt...")
                     archive = json.dumps(e.workflow, indent=2)
                     archives.append(archive)
                     error_msg = get_error_msg(e.stage, e.message)
