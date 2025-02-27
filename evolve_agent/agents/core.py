@@ -58,9 +58,9 @@ def get_error_msg(stage: str, message: str) -> str:
 class Agent:
     def __init__(self):
         self.agent_meta, _ = get_model(model_id="openai/gpt-4o", format="json", temperature=0.8)
-        rag_model, rag_embeddings = get_model(model_id="openai/gpt-4o-mini", format="json", temperature=0.2)
+        rag_model, rag_embeddings = get_model(model_id="openai/gpt-4o", format="json", temperature=0.2)
         self.agent_rag = TemplateRAG(model=rag_model, embeddings=rag_embeddings)
-        self.agent_input, _ = get_model(model_id="openai/gpt-4o-mini", format="json", temperature=0.2)
+        self.agent_input, _ = get_model(model_id="openai/gpt-4o", format="json", temperature=0.2)
 
         self.n8n_service = N8nService()
 
@@ -73,6 +73,7 @@ class Agent:
     ) -> Dict[str, Any]:
         logger.info("[Agent] RAG agent generating workflow")
         response = self.agent_rag.query(prompt, archive, errors, guidelines)
+        logger.debug(f"[Agent] RAG agent response: {response}")
         workflow = json.loads(response["answer"])
         logger.info(f"[Agent] Generated workflow: {workflow['name']}")
         return workflow
@@ -223,7 +224,7 @@ class Agent:
                         step_name=f"{timestamp}---{idx_iter + 1:02d}",
                         prompt=prompt,
                         archive="\n".join(archives),
-                        errors=error_msg,
+                        errors=error_msg if error_msg else "",
                         guidelines=json.loads(response_meta)["guidelines"],
                     )
                     return response_rag
