@@ -76,7 +76,6 @@ class TemplateRAG:
             self.vectorstore = Chroma(
                 persist_directory=str(self.templates_dir),
                 embedding_function=self.embeddings,
-                collection_name="workflow_templates",
             )
         else:
             logger.info("[RAG] Creating new vector store...")
@@ -102,6 +101,7 @@ class TemplateRAG:
         archive: str = None,
         errors: str = None,
         guidelines: str = None,
+        DEBUG: bool = False,
     ) -> Dict:
         """Query the RAG system about workflow templates.
 
@@ -116,6 +116,18 @@ class TemplateRAG:
         """
         if not self.retrieval_chain:
             raise ValueError("RAG system not initialized. Call initialize() first.")
+        if DEBUG:
+            rag_prompt = get_rag_prompt()
+            prompt = rag_prompt.format(
+                context="",
+                input=question,
+                archive=archive,
+                errors=errors,
+                guidelines=guidelines,
+            )
+            response = self.model.invoke(prompt)
+            return {"answer": response.content}
+
         return self.retrieval_chain.invoke(
             {"input": question, "archive": archive, "errors": errors, "guidelines": guidelines}
         )
@@ -139,7 +151,8 @@ if __name__ == "__main__":
     from .core import get_model
 
     print("Testing with Ollama model...")
-    rag_model, rag_embeddings = get_model(model_id="ollama/llama3.2", format="json", temperature=0.2)
+    # rag_model, rag_embeddings = get_model(model_id="ollama/llama3.2", format="json", temperature=0.2)
+    rag_model, rag_embeddings = get_model(model_id="openai/gpt-4o-mini", format="json", temperature=0.2)
     rag = TemplateRAG(templates_dir=templates_dir, model=rag_model, embeddings=rag_embeddings)
 
     # 1. Test basic template querying

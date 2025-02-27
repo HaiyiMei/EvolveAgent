@@ -64,7 +64,7 @@ Your response should be organized as follows:
 "reflection": Provide your thoughts on the interestingness of the architecture, identify any mistakes in the implementation, and suggest improvements.
 "thought": Revise your previous proposal or propose a new architecture if necessary, using the same format as the example response.
 "name": Provide a name for the revised or new architecture. (Don't put words like "new" or "improved" in the name.)
-"guidelines": Provide the GUIDELINES to the the RAG agent which will be used to search for the best template.
+"guidelines": Provide the GUIDELINES to the the RAG agent which will be used to search for the best template, mainly focus on how to improve the implementation of "nodes" and "connections".
 
 Please return in JSON format like:
 {{"reflection": "...",
@@ -76,7 +76,7 @@ Please return in JSON format like:
 
 def get_rag_prompt() -> PromptTemplate:
     # prompt = hub.pull("rlm/rag-prompt")
-    template = """You are an expert at understanding and explaining n8n workflow templates.
+    template = """You are an expert at understanding and generating n8n workflow templates.
 
 # Context
 And you are given the following template information:
@@ -110,7 +110,8 @@ Remember to:
 1. Imitate the style of the template
 2. Make sure to return in a WELL-FORMED JSON object
 3. Focus on the "nodes" and "connections" keys
-4. DO generate the workflow using the same webhook mechanism as the example workflow provided"""
+4. DO generate the workflow using the same webhook mechanism as the example workflow provided
+5. DO refer to the example workflow provided to generate the workflow, especially the "nodes" and "connections" keys"""
 
     return PromptTemplate.from_template(
         template=template,

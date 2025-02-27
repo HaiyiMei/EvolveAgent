@@ -8,7 +8,6 @@ services:
       - ./pytest.ini:/workspace/pytest.ini
       - ./pyproject.toml:/workspace/pyproject.toml
       - ./.env:/workspace/evolve_agent/.env
-      - ./logs:/workspace/logs
     environment:
       - PYTHONDONTWRITEBYTECODE=1  # Prevents Python from writing .pyc files
       - PYTHONUNBUFFERED=1  # Prevents Python from buffering stdout and stderr
